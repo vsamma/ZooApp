@@ -117,7 +117,7 @@ namespace ZooApp.Controllers
                 Name = animal.Name,
                 YearOfBirth = animal.YearOfBirth,
                 Age = animal.Age,
-                CreationDate = animal.CreationDate,
+                CreationDate = animal.CreationDate,//how to specify creation date?
                 SpeciesName = animal.Species.Name
             };
 
