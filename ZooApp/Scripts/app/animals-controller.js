@@ -62,5 +62,21 @@
             
             return (sum / $scope.animals.length);
         };
+
+        $scope.addAnimal = function () {
+
+        };
+
+        $scope.modifyAnimal = function () {
+
+        };
+
+        $scope.deleteAnimal = function (animal) {
+            if (confirm("Are you sure you want to delete '"+animal.Name+"'?")) {
+                // TODO:  Do something here if the answer is "Ok".
+                console.log("Deleting animal '" + animal.Name + "' with id '" + id + "'.");
+            }
+            
+        };
     });
 })();

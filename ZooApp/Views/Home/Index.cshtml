@@ -12,6 +12,10 @@
                         <p class="lead">{{message}}</p>
                     </div>
 
+                    <div class="col-md-12" >
+                        <button type="button" class="btn btn-info pull-right" style="margin-bottom: 10px;" ng-click="addAnimal()">Lisa uus loom</button>
+                    </div>
+
                     <table ng-disabled="working" class="table table-striped table-bordered">
                         <thead>
                             <tr>
@@ -20,6 +24,7 @@
                                 <th>Sünniaasta</th>
                                 <th>Vanus</th>
                                 <th>Lisamisaeg</th>
+                                <th>Valikud</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -29,6 +34,10 @@
                                 <td>{{ animal.YearOfBirth }}</td>
                                 <td>{{ animal.Age }}</td>
                                 <td>{{ animal.CreationDate }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-info" ng-click="modifyAnimal(animal)">Muuda</button>
+                                    <button type="button" class="btn btn-danger" ng-click="deleteAnimal(animal)">Kustuta</button>
+                                </td>
                             </tr>
                         </tbody>
                         <tfoot>
@@ -37,6 +46,7 @@
                                 <td></td>
                                 <td></td>
                                 <td>{{avgAge}}</td>
+                                <td></td>
                                 <td></td>
                             </tr>
                         </tfoot>

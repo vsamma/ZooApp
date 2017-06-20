@@ -8,8 +8,9 @@ namespace ZooApp.Models
 {
     public class Species
     {
+        [Required(ErrorMessage = "Id is required")]
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Name is required", AllowEmptyStrings = false)]
         public string Name { get; set; }
     }
 }
