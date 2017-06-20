@@ -15,3 +15,10 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+#content {
+    position:relative;
+    background:#fff;
+    padding:50px 0 0 0;
+}

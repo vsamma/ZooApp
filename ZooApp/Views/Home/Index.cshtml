@@ -1,24 +1,53 @@
-﻿<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+﻿@{
+    ViewBag.Title = "Zoo";
+}
+
+<div id="bodyContainer" ng-app="ZooApp">
+    <section id="content">
+        <div class="container">
+            <div class="row">
+                <div class="flip-container text-center col-md-12" ng-controller="AnimalsCtrl" ng-init="loadSpecies();loadAnimals()">
+
+                    <div class="front" ng-class="">
+                        <p class="lead">{{message}}</p>
+                    </div>
+
+                    <table ng-disabled="working" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Liik</th>
+                                <th>Nimi</th>
+                                <th>Sünniaasta</th>
+                                <th>Vanus</th>
+                                <th>Lisamisaeg</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="animal in animals">
+                                <td>{{ animal.SpeciesName }}</td>
+                                <td>{{ animal.Name }}</td>
+                                <td>{{ animal.YearOfBirth }}</td>
+                                <td>{{ animal.Age }}</td>
+                                <td>{{ animal.CreationDate }}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{{avgAge}}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-        a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-        is an ideal platform for building RESTful applications on the .NET Framework.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
-    </div>
-</div>
+
+@section scripts {
+    @Scripts.Render("~/Scripts/angular.js")
+    @Scripts.Render("~/Scripts/app/animals-controller.js")
+}
