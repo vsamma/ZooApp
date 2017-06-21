@@ -4,54 +4,51 @@
     var app = angular.module('ZooApp', []); 
 
     // Controller
-    app.controller('AnimalsCtrl', function ($scope, $http) {
-        //$scope.answered = false;
-        $scope.title = "loading...";
-        $scope.message = "App is starting, eh?"
+    app.controller('AnimalsCtrl', function ($scope, $http, $window) {
         $scope.species = [];
+        $scope.animal = { Id: null, Name: '', Age: null, YearOfBirth: null, CreationDate: null, Species: { Id: null, Name: '' } };
         $scope.animals = [];
-        //$scope.correctAnswer = false;
         $scope.working = false;
         $scope.avgAge = 0;
 
         $scope.loadSpecies = function () {
             $scope.working = true;
-            $scope.title = "loading species...";
+            $scope.status = "Pärin looma liike...";
+            $scope.statusClass = "progress-bar-info";
             $scope.species = [];
 
-
             $http.get("/api/Species").then(function (response) {
-                //console.log("Species returned:");
-                //console.log(response);
                 $scope.species = response.data;
-                $scope.title = "Species loaded";
+                $scope.status = "Looma liigid päritud";
+                $scope.statusClass = "progress-bar-success";
                 $scope.working = false;
-            }, function() {
-                $scope.title = "Oops... something went wrong with Species request";
+            }, function(response) {
+                $scope.status = "Loomaliikide pärimine ebaõnnestus!";
+                $scope.statusClass = "progress-bar-danger";
+                $scope.showAlert(response);
                 $scope.working = false;
             });
         };
 
         $scope.loadAnimals = function () {
             $scope.working = true;
-            $scope.title = "loading animals...";
+            $scope.status = "Pärin loomade nimekirja...";
+            $scope.statusClass = "progress-bar-info";
             $scope.animals = [];
 
             $http.get("/api/Animals").then(function (response) {
-                //console.log("Animals returned:");
-                //console.log(response);
                 $scope.animals = response.data;
-                $scope.title = "Animals loaded";
+                $scope.status = "Loomade nimekiri päritud";
+                $scope.statusClass = "progress-bar-success";
                 $scope.avgAge = $scope.calcAvgAge();
                 $scope.working = false;
-            }, function () {
-                $scope.title = "Oops... something went wrong with Animals request";
+            }, function (response) {
+                $scope.status = "Loomade pärimine ebaõnnestus!";
+                $scope.statusClass = "progress-bar-danger";
+                $scope.showAlert(response);
                 $scope.working = false;
             });
         };
-
-        
-
 
         $scope.calcAvgAge = function () {
             var sum = 0;
@@ -63,20 +60,115 @@
             return (sum / $scope.animals.length);
         };
 
-        $scope.addAnimal = function () {
+        $scope.addAnimal = function (animal) {
+            $scope.working = true;
+            $scope.status = "Lisan uut looma '"+animal.Name+"'...";
+            $scope.statusClass = "progress-bar-info";
 
+            var newAnimal = { Name: animal.Name, YearOfBirth: animal.YearOfBirth, SpeciesId: animal.Species.Id }
+
+            $http.post("/api/Animals", newAnimal).then(function (response) {
+                $scope.status = "Uus loom '" + newAnimal.Name + "' lisatud!";
+                $scope.statusClass = "progress-bar-success";
+                $scope.working = false;
+                //reload all animals
+                $scope.loadAnimals();
+            }, function (response) {
+                $scope.status = "Looma '" + newAnimal.Name + "' lisamine ebaõnnestus!";
+                $scope.statusClass = "progress-bar-danger";
+                $scope.showAlert(response);
+                $scope.working = false;
+            });
         };
 
-        $scope.modifyAnimal = function () {
+        $scope.updateAnimal = function (animal) {
+            $scope.working = true;
+            $scope.status = "Uuendan looma '"+animal.Name+"' andmeid...";
+            $scope.statusClass = "progress-bar-info";
 
+            animal.SpeciesId = animal.Species.Id
+
+            for (var i = 0; i < $scope.species.length; i++) {
+                if ($scope.species[i].Id === animal.Species.Id) {
+                    animal.Species.Name = $scope.species[i].Name;
+                    break;
+                }
+            }
+
+            $http.put("/api/Animals/"+animal.Id, animal).then(function (response) {
+                $scope.status = "Looma '" + animal.Name + "' andmed uuendatud!";
+                $scope.statusClass = "progress-bar-success";
+                $scope.working = false;
+                //reload all animals
+                $scope.loadAnimals();
+            }, function (response) {
+                $scope.status = "Looma '" + animal.Name + "' andmete uuendamine ebaõnnestus!";
+                $scope.statusClass = "progress-bar-danger";
+                $scope.showAlert(response);
+                $scope.working = false;
+            });
+        };
+
+        $scope.submitAnimal = function () {
+            if($scope.animal.Id===null){
+                $scope.addAnimal($scope.animal);
+            }else{
+                $scope.updateAnimal($scope.animal);
+            }
+            $scope.reset();
+        };
+
+        $scope.modifyAnimal = function (id) {
+            for (var i = 0; i < $scope.animals.length; i++) {
+                if ($scope.animals[i].Id === id) {
+                    $scope.animal = angular.copy($scope.animals[i]);
+                    break;
+                }
+            }
         };
 
         $scope.deleteAnimal = function (animal) {
-            if (confirm("Are you sure you want to delete '"+animal.Name+"'?")) {
-                // TODO:  Do something here if the answer is "Ok".
-                console.log("Deleting animal '" + animal.Name + "' with id '" + id + "'.");
+            if (confirm("Kas oled kindel, et soovid kustutada looma '" + animal.Name + "'?")) {
+                $scope.working = true;
+                $scope.status = "Looma '" + animal.Name + "' kustutamine...";
+                $scope.statusClass = "progress-bar-info";
+
+                if ($scope.animal.Id === animal.Id) {//clean form if the department to be deleted is shown there.
+                    $scope.reset();
+                }
+
+                $http.delete("/api/Animals/" + animal.Id).then(function (response) {
+                    $scope.status = "Loom '" + animal.Name + "' kustutatud!";
+                    $scope.statusClass = "progress-bar-success";
+                    $scope.working = false;
+                    //reload all animals
+                    $scope.loadAnimals();
+                }, function (response) {
+                    $scope.status = "Looma '" + animal.Name + "' kustutamine ebaõnnestus!";
+                    $scope.statusClass = "progress-bar-danger";
+                    $scope.showAlert(response);
+                    $scope.working = false;
+                });
             }
             
         };
+
+        $scope.reset = function () {
+            $scope.animal = { Id: null, Name: '', Age: null, YearOfBirth: null, CreationDate: null, SpeciesName: '' };
+            $scope.animalForm.$setPristine(); //reset Form
+        }
+
+        $scope.initController = function () {
+            $scope.loadSpecies();
+            $scope.loadAnimals();
+        }
+
+        $scope.showAlert = function (response) {
+            angular.forEach(response.data.ModelState, function (value, key) {
+                $window.alert(value);
+            });
+        }
+
+        $scope.initController();
     });
 })();

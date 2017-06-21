@@ -4,53 +4,105 @@
 
 <div id="bodyContainer" ng-app="ZooApp">
     <section id="content">
-        <div class="container">
+        <div class="container" ng-controller="AnimalsCtrl">
             <div class="row">
-                <div class="flip-container text-center col-md-12" ng-controller="AnimalsCtrl" ng-init="loadSpecies();loadAnimals()">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><span class="lead">{{!animal.Id ? 'Lisa uus loom' : 'Uuenda looma infot'}}</span></div>
+                    <div class="formcontainer">
+                        <form ng-submit="submitAnimal()" name="animalForm" class="form-horizontal" style="margin-top:10px;">
+                            <input type="hidden" ng-model="animal.Id" />
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="col-md-2 control-label" for="name">Nimi</label>
+                                    <div class="col-md-7">
+                                        <input type="text" ng-model="animal.Name" id="name" name="name" class="field form-control input-sm" placeholder="Sisesta looma nimi" required ng-minlength="3" />
+                                        <div class="has-error" ng-show="animalForm.$dirty">
+                                            <span ng-show="animalForm.name.$touched && animalForm.name.$error.required" class="text-danger">This is a required field</span>
+                                            <span ng-show="animalForm.name.$error.minlength" class="text-danger">Minimum length required is 3</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="col-md-2 control-label" for="yearofbirth">Sünniaasta</label>
+                                    <div class="col-md-7">
+                                        <input type="number" ng-model="animal.YearOfBirth" id="yearofbirth" name="yearofbirth" class="field form-control input-sm" placeholder="Sisesta looma sünniaasta" required ng-minlength="4" ng-maxlength="4" />
+                                        <div class="has-error" ng-show="animalForm.$dirty">
+                                            <span ng-show="animalForm.yearofbirth.$touched && animalForm.yearofbirth.$error.required" class="text-danger">This is a required field</span>
+                                            <span ng-show="animalForm.yearofbirth.$error.minlength" class="text-danger">Minimum length required is 4</span>
+                                            <span ng-show="animalForm.yearofbirth.$error.maxlength" class="text-danger">Maximum length required is 4</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="col-md-2 control-label" for="speciesname">Liik</label>
+                                    <div class="col-md-7">
+                                        <select id="species" name="species" ng-model="animal.Species.Id" ng-options="s.Id as s.Name for s in species" required>
+                                            <option value="">-- Vali looma liik --</option>
+                                        </select>
+                                        <div class="has-error" ng-show="animalForm.$dirty">
+                                            <span ng-show="animalForm.species.$touched && animalForm.species.$error.required" class="text-danger">This is a required field</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="front" ng-class="">
-                        <p class="lead">{{message}}</p>
+                            <div class="row">
+                                <div class="form-actions col-md-10 pull-right" style="margin-bottom: 10px;">
+                                    <input type="submit" value="{{!animal.Id ? 'Lisa' : 'Uuenda'}}" class="btn btn-info btn-sm" ng-disabled="animalForm.$invalid">
+                                    <button type="button" ng-click="reset()" class="btn btn-warning btn-sm" ng-disabled="animalForm.$pristine">Tühjenda vorm</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-
-                    <div class="col-md-12" >
-                        <button type="button" class="btn btn-info pull-right" style="margin-bottom: 10px;" ng-click="addAnimal()">Lisa uus loom</button>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" ng-class="statusClass" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%"><p>{{status}}</p></div>
+                </div>
+                    <div class="panel panel-default">
+                    <div class="panel-heading"><span class="lead">Loomade nimekiri</span></div>
+                    <div class="row">
+                        <div class="flip-container text-center col-md-12">
+                            <table ng-disabled="working" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Liik</th>
+                                        <th>Nimi</th>
+                                        <th>Sünniaasta</th>
+                                        <th>Vanus</th>
+                                        <th>Lisamisaeg</th>
+                                        <th>Valikud</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="a in animals">
+                                        <td>{{ a.Species.Name }}</td>
+                                        <td>{{ a.Name }}</td>
+                                        <td>{{ a.YearOfBirth }}</td>
+                                        <td>{{ a.Age }}</td>
+                                        <td>{{ a.CreationDate }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-info" ng-click="modifyAnimal(a.Id)">Muuda</button>
+                                            <button type="button" class="btn btn-danger" ng-click="deleteAnimal(a)">Kustuta</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>{{avgAge | number : 1}}</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
-
-                    <table ng-disabled="working" class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Liik</th>
-                                <th>Nimi</th>
-                                <th>Sünniaasta</th>
-                                <th>Vanus</th>
-                                <th>Lisamisaeg</th>
-                                <th>Valikud</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="animal in animals">
-                                <td>{{ animal.SpeciesName }}</td>
-                                <td>{{ animal.Name }}</td>
-                                <td>{{ animal.YearOfBirth }}</td>
-                                <td>{{ animal.Age }}</td>
-                                <td>{{ animal.CreationDate }}</td>
-                                <td>
-                                    <button type="button" class="btn btn-info" ng-click="modifyAnimal(animal)">Muuda</button>
-                                    <button type="button" class="btn btn-danger" ng-click="deleteAnimal(animal)">Kustuta</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>{{avgAge}}</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </table>
                 </div>
             </div>
         </div>

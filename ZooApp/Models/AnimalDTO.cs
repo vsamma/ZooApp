@@ -11,7 +11,7 @@ namespace ZooApp.Models
         public string Name { get; set; }
         public int YearOfBirth { get; set; }
         public int Age { get; set; }
-        public DateTime CreationDate { get; set; }
-        public string SpeciesName { get; set; }
+        public DateTime? CreationDate { get; set; }
+        public Species Species { get; set; }
     }
 }

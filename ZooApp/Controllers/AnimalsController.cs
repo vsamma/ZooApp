@@ -27,8 +27,8 @@ namespace ZooApp.Controllers
                               Name = b.Name,
                               YearOfBirth = b.YearOfBirth,
                               Age = b.Age,
-                              CreationDate = b.CreationDate,
-                              SpeciesName = b.Species.Name
+                              CreationDate = b.CreationDate,//.HasValue ? b.CreationDate.Value : ,
+                              Species = b.Species
                           };
             //return db.Animals
             //// new code:
@@ -49,7 +49,7 @@ namespace ZooApp.Controllers
                 YearOfBirth = b.YearOfBirth,
                 Age = b.Age,
                 CreationDate = b.CreationDate,
-                SpeciesName = b.Species.Name
+                Species = b.Species
             }).SingleOrDefaultAsync(b => b.Id == id);
 
             if (animal == null)
@@ -73,6 +73,8 @@ namespace ZooApp.Controllers
             {
                 return BadRequest();
             }
+
+            animal.Age = (DateTime.UtcNow.Year - animal.YearOfBirth);
 
             db.Entry(animal).State = EntityState.Modified;
 
@@ -99,10 +101,19 @@ namespace ZooApp.Controllers
         [ResponseType(typeof(Animal))]
         public async Task<IHttpActionResult> PostAnimal(Animal animal)
         {
+            bool isAnimalDuplicate = db.Animals.Any(x => x.Name == animal.Name && x.SpeciesId == animal.SpeciesId);
+
+            if (isAnimalDuplicate)
+            {
+                ModelState.AddModelError("Error", "Samast liigist samanimeline loom on juba lisatud! Proovi uuesti");
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            animal.CreationDate = DateTime.UtcNow;
+            animal.Age = (DateTime.UtcNow.Year - animal.YearOfBirth);
 
             db.Animals.Add(animal);
             await db.SaveChangesAsync();
@@ -117,8 +128,8 @@ namespace ZooApp.Controllers
                 Name = animal.Name,
                 YearOfBirth = animal.YearOfBirth,
                 Age = animal.Age,
-                CreationDate = animal.CreationDate,//how to specify creation date?
-                SpeciesName = animal.Species.Name
+                CreationDate = animal.CreationDate,
+                Species = animal.Species
             };
 
 

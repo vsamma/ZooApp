@@ -202,6 +202,10 @@
     <Compile Include="Migrations\201706182023144_Initial.Designer.cs">
       <DependentUpon>201706182023144_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201706211142293_Changed CreationDate to nullable.cs" />
+    <Compile Include="Migrations\201706211142293_Changed CreationDate to nullable.Designer.cs">
+      <DependentUpon>201706211142293_Changed CreationDate to nullable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Animal.cs" />
     <Compile Include="Models\AnimalDTO.cs" />
@@ -275,6 +279,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201706182023144_Initial.resx">
       <DependentUpon>201706182023144_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706211142293_Changed CreationDate to nullable.resx">
+      <DependentUpon>201706211142293_Changed CreationDate to nullable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
